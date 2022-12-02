@@ -1,34 +1,21 @@
 {
-  "name": "layer-one-validator",
-  "version": "0.1.0",
-  "description": "Expressjs middleware to validate data from client side requests",
-  "main": "./src/index.js",
+  "name": "layer-one-validator-example",
+  "version": "0.0.0",
+  "description": "Small express application using the library layer-one-validator",
+  "main": "app.js",
   "scripts": {
-    "test": "mocha ./tests/src/**/*.spec.js --diff false || exit 0",
-    "test-helpers": "mocha ./tests/helpers/**/*.spec.js --diff false || exit 0"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vikcch/layer-one-validator.git"
   },
-  "keywords": [
-    "expressjs-middleware",
-    "validator",
-    "layer-one",
-    "business",
-    "types",
-    "fields",
-    "validation",
-    "server-side",
-    "back-end"
-  ],
-  "author": "vikcch",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/vikcch/layer-one-validator/issues"
-  },
-  "homepage": "https://github.com/vikcch/layer-one-validator#readme",
-  "devDependencies": {
-    "mocha": "^10.1.0"
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "layer-one-validator": "^0.1.0"
   }
 }
