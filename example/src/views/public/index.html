@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>layer-one-validator</title>
+
+    <style>
+        body>*+* {
+            margin-top: 16px;
+        }
+
+        label {
+            display: block;
+        }
+
+        button,
+        input {
+            padding: 8px 16px;
+            margin-right: 16px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <h1>HTTP Request - Fetch API</h1>
+
+    <label>
+        <span>Username:</span> <mark>String lowercase between 4 and 8 chars</mark><br>
+        <input id="username" type="text" value="vikcch">
+    </label>
+
+    <label>
+        <span>Id:</span> <mark>Positive integer</mark><br>
+        <input id="id" type="text" value="23">
+    </label>
+
+    <div>
+        <button id="post-body-button">Post body</button>
+
+        <button id="post-params-button">Post params</button>
+
+        <button id="post-query-button">Get query</button>
+    </div>
+
+    <pre id="response"></pre>
+
+    <script>
+
+        const responseEl = document.querySelector('#response');
+
+        const postBodyButton = document.querySelector('#post-body-button');
+        const postParamsButton = document.querySelector('#post-params-button');
+        const postQueryButton = document.querySelector('#post-query-button');
+
+        const idEl = document.querySelector('#id');
+        const usernameEl = document.querySelector('#username');
+
+        postBodyButton.addEventListener('click', async function () {
+
+            const rawResponse = await fetch('/user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: Number(idEl.value),
+                    username: usernameEl.value
+                })
+            });
+            const response = await rawResponse.json();
+            responseEl.textContent += `${JSON.stringify(response)}\n`;
+        });
+
+        postParamsButton.addEventListener('click', async function () {
+
+            if (!idEl.value || !usernameEl.value) return alert('Empty field');
+
+            const endPoint = `/user/${idEl.value}/${usernameEl.value}`;
+            const rawResponse = await fetch(endPoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            const response = await rawResponse.json();
+            responseEl.textContent += `${JSON.stringify(response)}\n`;
+        });
+
+        postQueryButton.addEventListener('click', async function () {
+
+            const query = `?id=${idEl.value}&username=${usernameEl.value}`;
+            const endPoint = `/user/query${query}`;
+
+            const rawResponse = await fetch(endPoint);
+            const response = await rawResponse.json();
+            responseEl.textContent += `${JSON.stringify(response)}\n`;
+        });
+
+    </script>
+
+</body>
+
+</html>
