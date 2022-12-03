@@ -6,7 +6,9 @@ Some _expressjs middleware_ callback functions to validate data from requests, c
 
 ### Server-side usage
 
-Install the library with `npm install layer-one-validator`
+Install the library with: 
+
+`npm install layer-one-validator`
 
 The _validator_ should be called using the `bind()` method. The first and only _argument_ could be an `object` or an `array`.
 
@@ -59,7 +61,7 @@ module.exports = {
         layerOne: layerOneValidator.body.bind([
             { prop: 'id', type: v => Number.isInteger(v), biz: v => v > 0 },
             { prop: 'username', biz: v => /^[a-z]{4,8}$/.test(v) }
-        ],
+        ]),
 
         execute(req, res, next) {
             /* ... */
@@ -80,7 +82,7 @@ export default {
         layerOne: layerOneValidator.body.bind([
             { prop: 'id', type: v => Number.isInteger(v), biz: v => v > 0 },
             { prop: 'username', biz: v => /^[a-z]{4,8}$/.test(v) }
-        ],
+        ]),
 
         execute(req, res, next) {
             /* ... */
@@ -97,11 +99,15 @@ Tests are using _mocha_, to run the tests use:
 
 ## Example of an express application
 
-The directory [example](https://github.com/vikcch/layer-one-validator/example) on the _github_ repository has simple sample project with the MVC pattern with the use of _layer-one-validator_:
+The directory [example](https://github.com/vikcch/layer-one-validator/tree/master/example) on the _github_ repository has simple sample project with the MVC pattern with the use of _layer-one-validator_:
 
 * Clone the project:
 
     `git clone -b example https://github.com/vikcch/layer-one-validator.git`
+
+* Change to the created directory _layer-one-validator_
+
+    `cd layer-one-validator`
 
 * Install necessary packages:
 
