@@ -219,7 +219,9 @@ describe('helpers layerOneValidator', function () {
 
         const expected = { success: false, message: failMessages.base.fields };
 
-        assert.deepStrictEqual(actual.value, expected);
+        const { success, message } = actual.value;
+
+        assert.deepStrictEqual({ success, message }, expected);
     });
 
     it('14. it should validate fields, types and business', function () {
@@ -285,7 +287,9 @@ describe('helpers layerOneValidator', function () {
 
         const expected = { success: false, message: failMessages.base.fields };
 
-        assert.deepStrictEqual(actual.value, expected);
+        const { success, message } = actual.value;
+
+        assert.deepStrictEqual({ success, message }, expected);
     });
 
     it('18. it should validate fields, types and business', function () {
@@ -302,7 +306,9 @@ describe('helpers layerOneValidator', function () {
 
         const expected = { success: false, message: failMessages.base.fields };
 
-        assert.deepStrictEqual(actual.value, expected);
+        const { success, message } = actual.value;
+
+        assert.deepStrictEqual({ success, message }, expected);
     });
 
     it('19. it should validate fields, types and business', function () {
@@ -600,4 +606,242 @@ describe('helpers layerOneValidator', function () {
 
         assert.deepStrictEqual(actual.value, expected);
     });
+
+
+    it('34. two properties must be inside an array', function () {
+
+
+        const actual = {};
+
+        const req = { body: { id: 3, username: 'vik' } };
+
+        layerOneValidator.body.call(
+
+            { prop: 'id', type: fns.isNumber, biz: fns.isPositiveInteger },
+            { prop: 'username', biz: (v => v === 'vik') }
+
+            , res(actual), next(actual));
+
+        // NOTE:: ↑ Sem `req`, para `res` ter "json()" e não par pau
+
+        const expected = { success: false };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('35. should name `id` as a missing `biz` function', function () {
+
+        const values = [
+            { prop: 'id', type: fns.isNumber, biz: fns.isNonExistence },
+            { prop: 'username', biz: (v => v === 'vik') }
+        ];
+
+        const actual = {};
+
+        const req = { body: { id: 3, username: 'vik' } };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const expected = { success: false };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('36. should name `username` as a missing `type` function', function () {
+
+        const values = [
+            { prop: 'id', type: fns.isNumber },
+            { prop: 'username', type: fns.isNonExistence }
+        ];
+
+        const actual = {};
+
+        const req = { body: { id: 3, username: 'vik' } };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const expected = { success: false };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('37. should say `12` must be a string', function () {
+
+        const values = [
+            { prop: 12, type: fns.isNumber },
+            { prop: 'username', biz: (v => v === 'vik') }
+        ];
+
+        const actual = {};
+
+        const req = { body: { id: 3, username: 'vik' } };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const expected = { success: false };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('38. `username` was not to send', function () {
+
+        const values = [
+            { prop: 'id', type: fns.isNumber },
+        ];
+
+        const actual = {};
+
+        const req = { body: { id: 3, username: 'vik' } };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const fields = { extra: ['username'], missing: [] };
+
+        const expected = { success: false, message: failMessages.base.fields, fields };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('39. extra fields sended', function () {
+
+        const values = [
+            { prop: 'id', type: fns.isNumber },
+        ];
+
+        const actual = {};
+
+        const req = { body: { car: 'on foot', id: 3, username: 'vik' } };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const fields = { extra: ['car', 'username'], missing: [] };
+
+        const expected = { success: false, message: failMessages.base.fields, fields };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('40. missing fields', function () {
+
+        const values = [
+            { prop: 'id', type: fns.isNumber },
+            { prop: 'username' },
+            { prop: 'age' },
+        ];
+
+        const actual = {};
+
+        const req = { body: { id: 3 } };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const fields = { extra: [], missing: ['username', 'age'] };
+
+        const expected = { success: false, message: failMessages.base.fields, fields };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('41. missing and extra fields', function () {
+
+        const values = [
+            { prop: 'id', type: fns.isNumber },
+            { prop: 'username' },
+            { prop: 'age' },
+        ];
+
+        const actual = {};
+
+        const req = { body: { id: 3, car: 'on foot' } };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const fields = { extra: ['car'], missing: ['username', 'age'] };
+
+        const expected = { success: false, message: failMessages.base.fields, fields };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('42. missing and extra fields - without bind array (var values)', function () {
+
+        const values = { prop: 'color', type: fns.isNumber };
+
+        const actual = {};
+
+        const req = { body: { id: 3, car: 'on foot' } };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const fields = { extra: ['id', 'car'], missing: ['color'] };
+
+        const expected = { success: false, message: failMessages.base.fields, fields };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('43. primeira prop sem array', function () {
+
+        const values = [
+            { prop: 'username', type: fns.isString, biz: biz.isUsername },
+            { prop: 'coords', type: fns.isString, biz: biz.isCoordsArray }
+        ];
+
+        const actual = {};
+
+        const req = {
+            body: { username: 12345, coords: [{ x: 45, y: 25 }, { x: 23, y: 34 }] }
+        };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const expected = { success: false, message: failMessages.base.type, fail: 'username' };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('44. primeira prop com array e fail na segunda prop', function () {
+
+        const values = [
+            { prop: 'coords', type: fns.isObject, biz: biz.isCoordsArray },
+            { prop: 'username', type: fns.isString, biz: biz.isUsername }
+        ];
+
+        const actual = {};
+
+        const req = {
+            body: { username: 12345, coords: [{ x: 45, y: 25 }, { x: 23, y: 34 }] }
+        };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const expected = { success: false, message: failMessages.base.type, fail: 'username' };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('45. primeira prop com array e fail nas duas props', function () {
+
+        const values = [
+            { prop: 'coords', type: fns.isString, biz: biz.isCoordsArray },
+            { prop: 'username', type: fns.isString, biz: biz.isUsername }
+        ];
+
+        const actual = {};
+
+        const req = {
+            body: { coords: [{ x: 45, y: 25 }, { x: 23, y: 34 }], username: 12345 }
+        };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const expected = {
+            success: false,
+            message: `${failMessages.base.type} :: ${failMessages.append.array}`,
+            fail: 'coords'
+        };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
 });

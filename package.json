@@ -4,7 +4,7 @@
   "description": "Expressjs middleware to validate data from client side requests",
   "main": "./src/index.js",
   "scripts": {
-    "test": "mocha ./tests/src/**/*.spec.js --diff false || exit 0",
+    "test": "env TEST=LOV  mocha ./tests/src/**/*.spec.js --diff false || exit 0",
     "test-helpers": "mocha ./tests/helpers/**/*.spec.js --diff false || exit 0"
   },
   "repository": {
@@ -32,6 +32,9 @@
     "/src"
   ],
   "devDependencies": {
-    "mocha": "^10.1.0"
+    "mocha": "^10.2.0"
+  },
+  "dependencies": {
+    "-": "0.0.1"
   }
 }

@@ -2,12 +2,12 @@
 
 const failMessages = {
     base: {
-        fields: 'input-fields :: Fields missing',
+        fields: 'input-fields :: Miss match',
         type: 'input-types',
         biz: 'biz',
     },
     append: {
-        array: 'The function must test the item instead of the array',
+        array: 'Tip: Test the item, not the array.',
     }
 };
 
@@ -50,13 +50,23 @@ const fields = function () {
 
         if (hasAllProps) return next();
 
-        res.json({ success: false, message: failMessages.base.fields });
+        const expected = Array.isArray(this.data) ? this.data : [this.data];
+        const actual = { ...this.reqProp };
+
+        const missing = expected.filter(v => !(v.prop in actual)).map(v => v.prop);
+        const extra = Object.keys(actual).filter(v => !expected.some(vv => vv.prop === v));
+
+        const fields = { missing, extra };
+
+        res.json({ success: false, message: failMessages.base.fields, fields });
     }
 };
 
 const type = function () {
 
-    let message = failMessages.base.type;
+    const messages = [];
+    const base = failMessages.base.type;
+    const append = ` :: ${failMessages.append.array}`;
 
     return (req, res, next) => () => {
 
@@ -66,9 +76,10 @@ const type = function () {
             const value = this.reqProp[prop];
             const arr = Array.isArray(value) ? value : [value];
 
-            if (Array.isArray(value)) {
+            const message = `${base}${Array.isArray(value) ? append : ''}`
+            messages.push({ prop, message });
 
-                message = `${message} :: ${failMessages.append.array}`;
+            if (Array.isArray(value)) {
 
                 try {
                     // NOTE:: Dá erro quando aplica metodo de array em primitive
@@ -87,6 +98,8 @@ const type = function () {
         if (tests.every(v => v.test)) return next();
 
         const fail = tests.find(v => !v.test).prop;
+
+        const { message } = messages.find(v => v.prop === fail);
 
         res.json({ success: false, message, fail });
     }
@@ -122,9 +135,14 @@ const biz = function () {
 
 const printError = error => {
 
+    const reset = '\x1b[0m';
+    const fgRed = '\x1b[31m';
+
+    const message = `${fgRed}${error.message}${reset}`;
+
     const repo = 'https://github.com/vikcch/layer-one-validator';
     const help = `\n➡ Check the documentation at: ${repo}`
-    console.error(error.name, '❌ layer-one-validator #', error.message, help);
+    console.error(error.name, '❌ layer-one-validator #', message, help);
 };
 
 /**
@@ -134,19 +152,25 @@ const printError = error => {
  */
 const dataValidator = data => {
 
-    if (data.some(v => !v.prop || typeof v.prop !== 'string')) {
+    const propFail = data.find(v => !v.prop || typeof v.prop !== 'string')
 
-        throw new Error('The `prop` property must be a string');
+    if (propFail) {
+
+        throw new Error(`The 'prop' property of '${propFail.prop}' must be a string`);
     }
 
-    if (data.some(v => Object.keys(v).includes('type') && typeof v.type !== 'function')) {
+    const typeFail = data.find(v => Object.keys(v).includes('type') && typeof v.type !== 'function');
 
-        throw new Error('The `type` property must be a function');
+    if (typeFail) {
+
+        throw new Error(`The 'type' property of '${typeFail.prop}' must be a function`);
     }
 
-    if (data.some(v => Object.keys(v).includes('biz') && typeof v.biz !== 'function')) {
+    const bizFail = data.find(v => Object.keys(v).includes('biz') && typeof v.biz !== 'function')
 
-        throw new Error('The `biz` property must be a function');
+    if (bizFail) {
+
+        throw new Error(`The 'biz' property of '${bizFail.prop}' must be a function`);
     }
 };
 
@@ -175,11 +199,31 @@ const arrayValidator = mixArray => {
     }
 };
 
+const requestValidator = (requestProp, req) => {
+
+    if (req.prop) throw new Error('Multiple properties must be on an array');
+
+    if (requestProp !== 'body') return;
+
+    if (process.env.TEST === 'LOV') return;
+
+    // NOTE:: key / field names are case-insensitive 
+    // https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
+
+    const contentType = req.headers['content-type']?.toLowerCase();
+
+    // NOTE:: Pode ter `charset=utf-8` no inicio ou fim
+    if (!contentType.includes('application/json')) {
+
+        throw new Error(`Set the headers { 'Content-Type': 'application/json' } `);
+    }
+};
+
 /**
  * 
  * @param { (object|array) } value Pode ser "mixArray" - array com props
  */
-const thisValidator = value => {
+const thisValidator = (value) => {
 
     const removeRequestProp = (value) => {
 
@@ -241,6 +285,8 @@ const start = function (req, res, next) {
 
     try {
 
+        requestValidator(this.requestProp, req);
+
         thisValidator(this);
 
         const that = {
@@ -290,7 +336,7 @@ const start = function (req, res, next) {
  * 
  */
 module.exports = {
-// export default {
+    // export default {
 
     /**
      * {@link} DOCUMENTATION: https://github.com/vikcch/layer-one-validator
