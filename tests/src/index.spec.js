@@ -7,7 +7,16 @@ const biz = require('../../helpers/biz');
 
 const assert = require('assert');
 
-const res = actual => ({ json(props) { actual.value = props; } });
+const res = actual => {
+    return {
+        json: props => actual.value = props,
+        status(code) {
+            actual.status = code;
+            return this;
+        }
+    };
+};
+
 const next = actual => () => { actual.value = { success: true } };
 
 describe('helpers layerOneValidator', function () {
@@ -695,9 +704,9 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const fields = { extra: ['username'], missing: [] };
+        const fail = { extra: ['username'], missing: [] };
 
-        const expected = { success: false, message: failMessages.base.fields, fields };
+        const expected = { success: false, message: failMessages.base.fields, fail };
 
         assert.deepStrictEqual(actual.value, expected);
     });
@@ -714,9 +723,9 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const fields = { extra: ['car', 'username'], missing: [] };
+        const fail = { extra: ['car', 'username'], missing: [] };
 
-        const expected = { success: false, message: failMessages.base.fields, fields };
+        const expected = { success: false, message: failMessages.base.fields, fail };
 
         assert.deepStrictEqual(actual.value, expected);
     });
@@ -735,9 +744,9 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const fields = { extra: [], missing: ['username', 'age'] };
+        const fail = { extra: [], missing: ['username', 'age'] };
 
-        const expected = { success: false, message: failMessages.base.fields, fields };
+        const expected = { success: false, message: failMessages.base.fields, fail };
 
         assert.deepStrictEqual(actual.value, expected);
     });
@@ -756,9 +765,9 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const fields = { extra: ['car'], missing: ['username', 'age'] };
+        const fail = { extra: ['car'], missing: ['username', 'age'] };
 
-        const expected = { success: false, message: failMessages.base.fields, fields };
+        const expected = { success: false, message: failMessages.base.fields, fail };
 
         assert.deepStrictEqual(actual.value, expected);
     });
@@ -773,9 +782,9 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const fields = { extra: ['id', 'car'], missing: ['color'] };
+        const fail = { extra: ['id', 'car'], missing: ['color'] };
 
-        const expected = { success: false, message: failMessages.base.fields, fields };
+        const expected = { success: false, message: failMessages.base.fields, fail };
 
         assert.deepStrictEqual(actual.value, expected);
     });
@@ -842,6 +851,7 @@ describe('helpers layerOneValidator', function () {
         };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 400);
     });
 
 });

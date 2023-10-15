@@ -1,5 +1,8 @@
 'use strict';
 
+// NOTE:: Status codes - Client erros
+// https://docs.github.com/en/rest/overview/resources-in-the-rest-api#client-errors
+
 const failMessages = {
     base: {
         fields: 'input-fields :: Miss match',
@@ -56,9 +59,9 @@ const fields = function () {
         const missing = expected.filter(v => !(v.prop in actual)).map(v => v.prop);
         const extra = Object.keys(actual).filter(v => !expected.some(vv => vv.prop === v));
 
-        const fields = { missing, extra };
+        const fail = { missing, extra };
 
-        res.json({ success: false, message: failMessages.base.fields, fields });
+        res.status(400).json({ success: false, message: failMessages.base.fields, fail });
     }
 };
 
@@ -101,7 +104,7 @@ const type = function () {
 
         const { message } = messages.find(v => v.prop === fail);
 
-        res.json({ success: false, message, fail });
+        res.status(400).json({ success: false, message, fail });
     }
 };
 
@@ -129,7 +132,7 @@ const biz = function () {
 
         const fail = tests.find(v => !v.test).prop;
 
-        res.json({ success: false, message, fail });
+        res.status(422).json({ success: false, message, fail });
     }
 };
 
@@ -309,7 +312,8 @@ const start = function (req, res, next) {
     } catch (err) {
 
         printError(err);
-        return res.json({ success: false });
+
+        res.status(400).json({ success: false });
     }
 };
 
