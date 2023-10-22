@@ -41,50 +41,73 @@ The _layer-one-validator_ is an object with 3 properties, `'body'`,`'params'` an
 
 When fails, the response will be an _json_ object, with some properties:
 
-* `{ success: false }` - Will throw an error with more information.
+* `{ success: false }` - Will throw an error on the server with more information.
 
 * `{ /* ... */, message }` - Shows the stage where the fails happened.
 
-* `{ /* ... */, fail }` - Shows the fail property name, useful on arrays.
+* `{ /* ... */, fail }` - Shows the fail property name.
 
 If successful, will go to the next _middleware_.
 
-### CommonJS modules
+### HTTP response status codes
 
+When there are issues with _prop_, _type_ or inconsistencies in property quantities:
+
+* `400 Bad Request`
+
+When fails on _biz_:
+
+* `422 Unprocessable Content`
+
+### Route only
+
+```js
+// route
+const layerOneValidator = require('layer-one-validator');
+
+router.post('/user',
+
+    layerOneValidator.body.bind([
+        { prop: 'weight', type: v => Number.isInteger(v), biz: v => v > 0 },
+        { prop: 'username', biz: v => /^[a-z]{4,8}$/.test(v) }
+    ]),
+
+    (request, response, next) => {
+        /* ... */
+    }
+);
+
+module.exports = router;
+```
+
+### Route & Controller
+
+```js
+// route
+const userController = require(/* ... */);
+
+router.post('/user',
+    userController.user.validation.layerOne,
+    userController.user.execute
+);
+```
 ```js
 // controller
 const layerOneValidator = require('layer-one-validator');
 
 module.exports = {
 
-    xxx: {
-        layerOne: layerOneValidator.body.bind([
-            { prop: 'id', type: v => Number.isInteger(v), biz: v => v > 0 },
-            { prop: 'username', biz: v => /^[a-z]{4,8}$/.test(v) }
-        ]),
+    // * POST
+    user: {
 
-        execute(req, res, next) {
-            /* ... */
-        }
-    }
-};
-```
+        validation: {
+            layerOne: layerOneValidator.body.bind([
+                { prop: 'weight', type: v => Number.isInteger(v), biz: v => v > 0 },
+                { prop: 'username', biz: v => /^[a-z]{4,8}$/.test(v) }
+            ])
+        },
 
-### ES6 modules
-
-```js
-// controller
-import layerOneValidator from 'layer-one-validator';
-
-export default {
-
-    xxx: {
-        layerOne: layerOneValidator.body.bind([
-            { prop: 'id', type: v => Number.isInteger(v), biz: v => v > 0 },
-            { prop: 'username', biz: v => /^[a-z]{4,8}$/.test(v) }
-        ]),
-
-        execute(req, res, next) {
+        execute(request, response, next) {
             /* ... */
         }
     }
