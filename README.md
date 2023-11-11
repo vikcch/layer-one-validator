@@ -12,7 +12,7 @@ Install the library with:
 
 The _validator_ should be called using the `bind()` method. The first and only _argument_ could be an `object` or an `array`.
 
-> NOTE:: If the value to be tested is an _array_, the `type:function` must be tested against each element of that `array`, for the `biz:function` it could be tested against the whole `array` or against each element.
+> NOTE:: If the value being tested is an _array_, the `type:function` must be examined for each element within that array. In the case of the `biz:function`, testing can be performed on the entire array or on each individual element.
 
 ### Syntax
 
@@ -41,15 +41,21 @@ The _layer-one-validator_ is an object with 3 properties, `'body'`,`'params'` an
 
 When fails, the response will be an _json_ object, with some properties:
 
-* `{ success: false }` - Will throw an error on the server with more information.
+* `{ success: false }` - Will throw an error on the server with additional information.
 
-* `{ /* ... */, message }` - Shows the stage where the fails happened.
+* `{ /* ... */, message }` - Indicates the stage at which the failures occurred.
 
-* `{ /* ... */, fail }` - Shows the fail property name.
+* `{ /* ... */, fail }` - Displays the name of the failing property.
+
+* `{ /* ... */, source }` - Displays the source as layer-one-validator.
 
 If successful, will go to the next _middleware_.
 
 ### HTTP response status codes
+
+If the bound _object_ or _objectsArray_ is incorrect, or if the `type` property function checks the entire array instead of individual items:
+
+* `500 Internal Server Error` 
 
 When there are issues with _prop_, _type_ or inconsistencies in property quantities:
 
@@ -80,7 +86,7 @@ router.post('/user',
 module.exports = router;
 ```
 
-### Route & Controller
+### Route & Helpers & Controller
 
 ```js
 // route
@@ -92,8 +98,22 @@ router.post('/user',
 );
 ```
 ```js
+// helpers - fns.js
+module.exports = {
+    isNumber: value => typeof value === 'number',
+    isString: value => typeof value === 'string'
+};
+// helpers - biz.js
+module.exports = {
+    isWeight: value => Number.isInteger(value) && value > 0,
+    isUsername: value => /^[a-z]{4,8}$/.test(value)
+};
+```
+```js
 // controller
 const layerOneValidator = require('layer-one-validator');
+const fns = require('./path_to_helpers/fns');
+const biz = require('./path_to_helpers/biz');
 
 module.exports = {
 
@@ -102,8 +122,8 @@ module.exports = {
 
         validation: {
             layerOne: layerOneValidator.body.bind([
-                { prop: 'weight', type: v => Number.isInteger(v), biz: v => v > 0 },
-                { prop: 'username', biz: v => /^[a-z]{4,8}$/.test(v) }
+                { prop: 'weight', type: fns.isNumber, biz: biz.isWeight },
+                { prop: 'username', type: fns.isString, biz: biz.isUsername }
             ])
         },
 
@@ -119,6 +139,10 @@ module.exports = {
 Tests are using _mocha_, to run the tests use:
 
 `$ npm test`
+
+Conducts tests without displaying _layer-one-validator_ helper errors in the console.
+
+`$ npm run test-no-print-error`
 
 ## Example of an express application
 

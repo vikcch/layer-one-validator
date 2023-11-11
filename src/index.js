@@ -3,6 +3,9 @@
 // NOTE:: Status codes - Client erros
 // https://docs.github.com/en/rest/overview/resources-in-the-rest-api#client-errors
 
+const source = 'layer-one-validator';
+const message_500 = 'If you own the server, check the logs';
+
 const failMessages = {
     base: {
         fields: 'input-fields :: Miss match',
@@ -11,7 +14,9 @@ const failMessages = {
     },
     append: {
         array: 'Tip: Test the item, not the array.',
-    }
+    },
+    source,
+    message_500
 };
 
 /**
@@ -61,15 +66,11 @@ const fields = function () {
 
         const fail = { missing, extra };
 
-        res.status(400).json({ success: false, message: failMessages.base.fields, fail });
+        res.status(400).json({ success: false, message: failMessages.base.fields, fail, source });
     }
 };
 
 const type = function () {
-
-    const messages = [];
-    const base = failMessages.base.type;
-    const append = ` :: ${failMessages.append.array}`;
 
     return (req, res, next) => () => {
 
@@ -79,21 +80,9 @@ const type = function () {
             const value = this.reqProp[prop];
             const arr = Array.isArray(value) ? value : [value];
 
-            const message = `${base}${Array.isArray(value) ? append : ''}`
-            messages.push({ prop, message });
-
-            if (Array.isArray(value)) {
-
-                try {
-                    // NOTE:: Dá erro quando aplica metodo de array em primitive
-                    return { prop, test: [...arr].every(fn) };
-
-                } catch (err) {
-
-                    printError(err);
-                    return { prop, test: false };
-                }
-            }
+            // NOTE:: Até à v0.2.0 verificava se testava contra o item do array...
+            // Em v0.3.0+ retorna 500, validado em `checkTypeAgainstItemValidator()`
+            // file:///C:\Users\vik\Dropbox\dev\minor\layer-one-validator\_sketch\_old-type.js
 
             return { prop, test: [...arr].every(fn) };
         });
@@ -102,9 +91,9 @@ const type = function () {
 
         const fail = tests.find(v => !v.test).prop;
 
-        const { message } = messages.find(v => v.prop === fail);
+        const message = failMessages.base.type;
 
-        res.status(400).json({ success: false, message, fail });
+        res.status(400).json({ success: false, message, fail, source });
     }
 };
 
@@ -132,11 +121,13 @@ const biz = function () {
 
         const fail = tests.find(v => !v.test).prop;
 
-        res.status(422).json({ success: false, message, fail });
+        res.status(422).json({ success: false, message, fail, source });
     }
 };
 
-const printError = error => {
+const tryPrintError = error => {
+
+    if (process.argv[5] === 'no-print-error') return;
 
     const reset = '\x1b[0m';
     const fgRed = '\x1b[31m';
@@ -149,17 +140,42 @@ const printError = error => {
 };
 
 /**
+ * The `type` property must be checked against the item, not the array
+ * 
+ * @param { { prop:string, type:function, biz:function }[] } data 
+ * @returns 
+ */
+const checkTypeAgainstItemValidator = data => {
+
+    const hasType = value => Object.keys(value).includes('type');
+
+    const types = ['', 0, false, {}];
+
+    const fail = data.find(v => hasType(v) && types.every(vv => !v.type(vv)));
+
+    if (fail) {
+
+        throw new Error(`Test the 'type' property of '${fail.prop}' against the item, not the array.`);
+    }
+};
+
+
+/**
  * 
  * @param { { prop:string, type:function, biz:function }[] } data 
  * @returns 
  */
 const dataValidator = data => {
 
-    const propFail = data.find(v => !v.prop || typeof v.prop !== 'string')
+    const propFail = data.find(v => !v.prop || typeof v.prop !== 'string');
 
     if (propFail) {
 
-        throw new Error(`The 'prop' property of '${propFail.prop}' must be a string`);
+        const message = propFail.prop
+            ? `The 'prop' property of '${propFail.prop}' must be a string`
+            : `The 'prop' property is mandatory`;
+
+        throw new Error(message);
     }
 
     const typeFail = data.find(v => Object.keys(v).includes('type') && typeof v.type !== 'function');
@@ -168,6 +184,8 @@ const dataValidator = data => {
 
         throw new Error(`The 'type' property of '${typeFail.prop}' must be a function`);
     }
+
+    checkTypeAgainstItemValidator(data);
 
     const bizFail = data.find(v => Object.keys(v).includes('biz') && typeof v.biz !== 'function')
 
@@ -188,7 +206,7 @@ const arrayValidator = mixArray => {
 
     if (keys.length !== array.length + extraPropsCount) {
 
-        throw new Error('Some properties are not allowed');
+        throw new Error('Prohibited properties. Allowed: `prop` (mandatory), `type` and `biz` (optional).');
     }
 
     const isDirty = array.some(item => {
@@ -198,7 +216,7 @@ const arrayValidator = mixArray => {
 
     if (isDirty) {
 
-        throw new Error('Some properties are not allowed');
+        throw new Error('Prohibited properties. Allowed: `prop` (mandatory), `type` and `biz` (optional).');
     }
 };
 
@@ -247,8 +265,7 @@ const thisValidator = (value) => {
     const keys = Object.keys(target);
 
     if (!Array.isArray(target) && keys.some(v => !alloweds.includes(v))) {
-
-        throw new Error('Some properties are not allowed');
+        throw new Error('Prohibited properties. Allowed: `prop` (mandatory), `type` and `biz` (optional).');
     }
 
     if (Array.isArray(target)) arrayValidator(value);
@@ -311,9 +328,9 @@ const start = function (req, res, next) {
 
     } catch (err) {
 
-        printError(err);
+        tryPrintError(err);
 
-        res.status(400).json({ success: false });
+        res.status(500).json({ success: false, message: message_500, source });
     }
 };
 

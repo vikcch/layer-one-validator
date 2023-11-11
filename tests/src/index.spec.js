@@ -17,9 +17,13 @@ const res = actual => {
     };
 };
 
+// NOTE:: `{ success: true }` apenas em testes
 const next = actual => () => { actual.value = { success: true } };
 
-describe('helpers layerOneValidator', function () {
+const source = failMessages.source;
+const message = failMessages.message_500;
+
+describe('layerOneValidator', function () {
 
     it('1. it should validate fields, types and business', function () {
 
@@ -179,9 +183,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('11. it should validate fields, types and business', function () {
@@ -196,9 +201,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('12. it should validate fields, types and business', function () {
@@ -211,9 +217,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('13. it should validate fields, types and business', function () {
@@ -226,11 +233,13 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
+        // NOTE:: Não espera todos of fields
         const expected = { success: false, message: failMessages.base.fields };
 
         const { success, message } = actual.value;
 
         assert.deepStrictEqual({ success, message }, expected);
+        assert.deepStrictEqual(actual.status, 400);
     });
 
     it('14. it should validate fields, types and business', function () {
@@ -294,11 +303,13 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.query.call(values, req, res(actual), next(actual));
 
+        // NOTE:: Não espera todos of fields
         const expected = { success: false, message: failMessages.base.fields };
 
         const { success, message } = actual.value;
 
         assert.deepStrictEqual({ success, message }, expected);
+        assert.deepStrictEqual(actual.status, 400);
     });
 
     it('18. it should validate fields, types and business', function () {
@@ -313,11 +324,13 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.query.call(values, req, res(actual), next(actual));
 
+        // NOTE:: Não espera todos of fields
         const expected = { success: false, message: failMessages.base.fields };
 
         const { success, message } = actual.value;
 
         assert.deepStrictEqual({ success, message }, expected);
+        assert.deepStrictEqual(actual.status, 400);
     });
 
     it('19. it should validate fields, types and business', function () {
@@ -330,9 +343,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.query.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('20. it should validate fields, types and business', function () {
@@ -345,9 +359,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('21. it should validate fields, types and business', function () {
@@ -365,9 +380,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('22. it should validate fields, types and business', function () {
@@ -382,9 +398,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('23. it should validate fields, types and business', function () {
@@ -399,9 +416,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('24. it should validate fields, types and business', function () {
@@ -416,9 +434,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('25. it should validate fields, types and business', function () {
@@ -433,9 +452,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('26. it should validate fields, types and business', function () {
@@ -450,13 +470,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = {
-            success: false,
-            message: `${failMessages.base.type} :: ${failMessages.append.array}`,
-            fail: 'usernames'
-        };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('27. it should validate fields, types and business', function () {
@@ -500,10 +517,12 @@ describe('helpers layerOneValidator', function () {
         const expected = {
             success: false,
             message: `${failMessages.base.biz}`,
-            fail: 'values'
+            fail: 'values',
+            source
         };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 422);
     });
 
     it('29. it should validate fields, types and business', function () {
@@ -525,9 +544,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('30. it should validate fields, types and business', function () {
@@ -549,9 +569,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('31. it should validate fields, types and business', function () {
@@ -573,13 +594,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = {
-            success: false,
-            message: `${failMessages.base.type} :: ${failMessages.append.array}`,
-            fail: 'values'
-        };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('32. it should validate fields, types and business', function () {
@@ -633,9 +651,10 @@ describe('helpers layerOneValidator', function () {
 
         // NOTE:: ↑ Sem `req`, para `res` ter "json()" e não par pau
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('35. should name `id` as a missing `biz` function', function () {
@@ -651,9 +670,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('36. should name `username` as a missing `type` function', function () {
@@ -669,9 +689,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('37. should say `12` must be a string', function () {
@@ -687,9 +708,10 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false };
+        const expected = { success: false, message, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
     it('38. `username` was not to send', function () {
@@ -706,9 +728,10 @@ describe('helpers layerOneValidator', function () {
 
         const fail = { extra: ['username'], missing: [] };
 
-        const expected = { success: false, message: failMessages.base.fields, fail };
+        const expected = { success: false, message: failMessages.base.fields, fail, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 400);
     });
 
     it('39. extra fields sended', function () {
@@ -725,9 +748,10 @@ describe('helpers layerOneValidator', function () {
 
         const fail = { extra: ['car', 'username'], missing: [] };
 
-        const expected = { success: false, message: failMessages.base.fields, fail };
+        const expected = { success: false, message: failMessages.base.fields, fail, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 400);
     });
 
     it('40. missing fields', function () {
@@ -746,9 +770,10 @@ describe('helpers layerOneValidator', function () {
 
         const fail = { extra: [], missing: ['username', 'age'] };
 
-        const expected = { success: false, message: failMessages.base.fields, fail };
+        const expected = { success: false, message: failMessages.base.fields, fail, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 400);
     });
 
     it('41. missing and extra fields', function () {
@@ -767,9 +792,10 @@ describe('helpers layerOneValidator', function () {
 
         const fail = { extra: ['car'], missing: ['username', 'age'] };
 
-        const expected = { success: false, message: failMessages.base.fields, fail };
+        const expected = { success: false, message: failMessages.base.fields, fail, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 400);
     });
 
     it('42. missing and extra fields - without bind array (var values)', function () {
@@ -784,12 +810,13 @@ describe('helpers layerOneValidator', function () {
 
         const fail = { extra: ['id', 'car'], missing: ['color'] };
 
-        const expected = { success: false, message: failMessages.base.fields, fail };
+        const expected = { success: false, message: failMessages.base.fields, fail, source };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 400);
     });
 
-    it('43. primeira prop sem array', function () {
+    it('43. primeira prop não é string', function () {
 
         const values = [
             { prop: 'username', type: fns.isString, biz: biz.isUsername },
@@ -804,9 +831,15 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message: failMessages.base.type, fail: 'username' };
+        const expected = {
+            success: false,
+            message: failMessages.base.type,
+            fail: 'username',
+            source
+        };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 400);
     });
 
     it('44. primeira prop com array e fail na segunda prop', function () {
@@ -824,9 +857,15 @@ describe('helpers layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message: failMessages.base.type, fail: 'username' };
+        const expected = {
+            success: false,
+            message: failMessages.base.type,
+            fail: 'username',
+            source
+        };
 
         assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 400);
     });
 
     it('45. primeira prop com array e fail nas duas props', function () {
@@ -846,12 +885,31 @@ describe('helpers layerOneValidator', function () {
 
         const expected = {
             success: false,
-            message: `${failMessages.base.type} :: ${failMessages.append.array}`,
-            fail: 'coords'
+            message: `${failMessages.base.type}`,
+            fail: 'coords',
+            source
         };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 400);
+    });
+
+    it('46. it should validate fields, types and business', function () {
+
+        const values = [
+            { prop: 'username', biz: undefined }
+        ];
+
+        const actual = {};
+
+        const req = { body: { username: 'vik' } };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const expected = { success: false, message, source };
+
+        assert.deepStrictEqual(actual.value, expected);
+        assert.deepStrictEqual(actual.status, 500);
     });
 
 });

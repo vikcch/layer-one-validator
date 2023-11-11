@@ -14,14 +14,20 @@ const isPositiveInteger = value => Number.isInteger(value) && value > 0;
 
 const canBePositiveInteger = value => Number.isInteger(Number(value)) && value > 0;
 
+const isArray = value => Array.isArray(value);
+
 module.exports = {
-    isNumber,
+    // isNumber,
+    isNumber: value => typeof value === 'number',
+    isPositiveInteger: value => Number.isInteger(value) && value > 0,
+
     isString,
     isBoolean,
     isObject,
 
     isObjectArray,
 
-    isPositiveInteger,
-    canBePositiveInteger
+    // isPositiveInteger,
+    canBePositiveInteger,
+    isArray
 };

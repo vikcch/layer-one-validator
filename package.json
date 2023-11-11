@@ -5,7 +5,8 @@
   "main": "./src/index.js",
   "scripts": {
     "test": "env TEST=LOV  mocha ./tests/src/**/*.spec.js --diff false || exit 0",
-    "test-helpers": "mocha ./tests/helpers/**/*.spec.js --diff false || exit 0"
+    "test-helpers": "mocha ./tests/helpers/**/*.spec.js --diff false || exit 0",
+    "test-no-print-error": "env TEST=LOV mocha ./tests/src/**/*.spec.js --diff false no-print-error || exit 0"
   },
   "repository": {
     "type": "git",
