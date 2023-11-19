@@ -47,7 +47,7 @@ When fails, the response will be an _json_ object, with some properties:
 
 * `{ /* ... */, fail }` - Displays the name of the failing property.
 
-* `{ /* ... */, source }` - Displays the source as layer-one-validator.
+* `{ /* ... */, source }` - Displays the source as `layer-one-validator`.
 
 If successful, will go to the next _middleware_.
 
@@ -103,6 +103,7 @@ module.exports = {
     isNumber: value => typeof value === 'number',
     isString: value => typeof value === 'string'
 };
+
 // helpers - biz.js
 module.exports = {
     isWeight: value => Number.isInteger(value) && value > 0,
@@ -143,30 +144,6 @@ Tests are using _mocha_, to run the tests use:
 Conducts tests without displaying _layer-one-validator_ helper errors in the console.
 
 `$ npm run test-no-print-error`
-
-## Example of an express application
-
-The directory [example](https://github.com/vikcch/layer-one-validator/tree/master/example) on the _github_ repository has simple sample project with the MVC pattern with the use of _layer-one-validator_:
-
-* Clone the project:
-
-    `git clone -b example https://github.com/vikcch/layer-one-validator.git`
-
-* Change to the created directory _layer-one-validator_
-
-    `cd layer-one-validator`
-
-* Install necessary packages:
-
-    `npm install`
-
-* Run the project:
-
-    `npm run start`
-
-* Navigatate to:
-
-    `http://127.0.0.1:8080/`
 
 ## License
 
