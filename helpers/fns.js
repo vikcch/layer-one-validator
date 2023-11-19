@@ -17,17 +17,12 @@ const canBePositiveInteger = value => Number.isInteger(Number(value)) && value >
 const isArray = value => Array.isArray(value);
 
 module.exports = {
-    // isNumber,
-    isNumber: value => typeof value === 'number',
-    isPositiveInteger: value => Number.isInteger(value) && value > 0,
-
+    isNumber,
     isString,
     isBoolean,
     isObject,
-
     isObjectArray,
-
-    // isPositiveInteger,
+    isPositiveInteger,
     canBePositiveInteger,
     isArray
 };

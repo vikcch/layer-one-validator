@@ -154,8 +154,12 @@ const checkTypeAgainstItemValidator = data => {
     const fail = data.find(v => hasType(v) && types.every(vv => !v.type(vv)));
 
     if (fail) {
-
-        throw new Error(`Test the 'type' property of '${fail.prop}' against the item, not the array.`);
+        const lines = [
+            `Ensure that the 'type' property of '${fail.prop}' is checked for its type.`,
+            "For example: `type: v => typeof v === 'string'`",
+            'Hint: Perform the test on the individual item, not the entire array.'
+        ];
+        throw new Error(lines.join('\n'));
     }
 };
 
