@@ -912,4 +912,59 @@ describe('layerOneValidator', function () {
         assert.deepStrictEqual(actual.status, 500);
     });
 
+    it('47. wrong type on array', function () {
+
+        const values = [
+            { prop: 'values', type: fns.isObject, biz: biz.isCoordsArray }
+        ];
+
+        const actual = {};
+
+        const req = {
+            body: {
+                values: [1]
+            }
+        };
+
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const expected = {
+            success: false,
+            message: `${failMessages.base.type}`,
+            fail: 'values',
+            source
+        };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('48. empty array', function () {
+
+        const values = [
+            { prop: 'values', type: fns.isObject, biz: biz.isCoordsArray }
+        ];
+
+        const actual = {};
+
+        const req = {
+            body: {
+                values: []
+            }
+        };
+
+        // STOPSHIP:: false ARRAY VAZIO TEM QUE SER FALSE
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const expected = {
+            success: false,
+            message: `${failMessages.base.biz}`,
+            fail: 'values',
+            source
+        };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
 });

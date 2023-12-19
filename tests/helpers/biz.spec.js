@@ -56,4 +56,20 @@ describe('helpers biz', function () {
             assert.strictEqual(actual, expected);
         });
     });
+
+    describe('# isCoordsArray', () => {
+
+        it('1. should be true', () => {
+
+            assert.strictEqual(biz.isCoordsArray([{ x: 23, y: 52 }]), true);
+
+        });
+
+        it('1. should be false', () => {
+
+            assert.strictEqual(biz.isCoordsArray([]), false);
+
+        });
+
+    });
 });

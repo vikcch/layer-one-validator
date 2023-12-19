@@ -114,7 +114,8 @@ const biz = function () {
                 if (fn(value)) return { prop, test: true };
             }
 
-            return { prop, test: [...arr].every(fn) };
+            // NOTE:: "[].every()" retorna `true` em empty array
+            return { prop, test: [...arr].every(fn) && arr.length };
         });
 
         if (tests.every(v => v.test)) return next();

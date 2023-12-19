@@ -18,6 +18,8 @@ const isCoords = ({ x, y }) => {
 
 const isCoordsArray = value => {
 
+    if (!Array.isArray(value) || !value.length) return false;
+
     return value.every(({ x, y }) => {
 
         return fns.isPositiveInteger(x) && fns.isPositiveInteger(y);
