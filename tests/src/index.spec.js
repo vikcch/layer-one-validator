@@ -953,8 +953,6 @@ describe('layerOneValidator', function () {
             }
         };
 
-        // STOPSHIP:: false ARRAY VAZIO TEM QUE SER FALSE
-
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
         const expected = {
