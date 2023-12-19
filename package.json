@@ -1,6 +1,6 @@
 {
   "name": "layer-one-validator",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Expressjs middleware to validate data from client side requests",
   "main": "./src/index.js",
   "scripts": {
