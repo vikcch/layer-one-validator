@@ -183,7 +183,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -201,7 +201,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -217,7 +217,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -343,7 +343,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.query.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'query', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -359,7 +359,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -380,7 +380,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -398,7 +398,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -416,7 +416,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -434,7 +434,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -452,7 +452,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -470,7 +470,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -518,6 +518,7 @@ describe('layerOneValidator', function () {
             success: false,
             message: `${failMessages.base.biz}`,
             fail: 'values',
+            layer: 'body',
             source
         };
 
@@ -544,7 +545,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -569,7 +570,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -594,7 +595,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -651,7 +652,7 @@ describe('layerOneValidator', function () {
 
         // NOTE:: ↑ Sem `req`, para `res` ter "json()" e não par pau
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -670,7 +671,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -689,7 +690,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -708,7 +709,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -728,7 +729,11 @@ describe('layerOneValidator', function () {
 
         const fail = { extra: ['username'], missing: [] };
 
-        const expected = { success: false, message: failMessages.base.fields, fail, source };
+        const expected = {
+            success: false,
+            message: failMessages.base.fields,
+            fail, layer: 'body', source
+        };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 400);
@@ -748,7 +753,10 @@ describe('layerOneValidator', function () {
 
         const fail = { extra: ['car', 'username'], missing: [] };
 
-        const expected = { success: false, message: failMessages.base.fields, fail, source };
+        const expected = {
+            success: false, message: failMessages.base.fields,
+            fail, layer: 'body', source
+        };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 400);
@@ -770,7 +778,11 @@ describe('layerOneValidator', function () {
 
         const fail = { extra: [], missing: ['username', 'age'] };
 
-        const expected = { success: false, message: failMessages.base.fields, fail, source };
+        const expected = {
+            success: false,
+            message: failMessages.base.fields,
+            fail, layer: 'body', source
+        };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 400);
@@ -792,7 +804,10 @@ describe('layerOneValidator', function () {
 
         const fail = { extra: ['car'], missing: ['username', 'age'] };
 
-        const expected = { success: false, message: failMessages.base.fields, fail, source };
+        const expected = {
+            success: false, message: failMessages.base.fields,
+            fail, layer: 'body', source
+        };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 400);
@@ -810,7 +825,10 @@ describe('layerOneValidator', function () {
 
         const fail = { extra: ['id', 'car'], missing: ['color'] };
 
-        const expected = { success: false, message: failMessages.base.fields, fail, source };
+        const expected = {
+            success: false, message: failMessages.base.fields,
+            fail, layer: 'body', source
+        };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 400);
@@ -832,10 +850,8 @@ describe('layerOneValidator', function () {
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
         const expected = {
-            success: false,
-            message: failMessages.base.type,
-            fail: 'username',
-            source
+            success: false, message: failMessages.base.type,
+            fail: 'username', layer: 'body', source
         };
 
         assert.deepStrictEqual(actual.value, expected);
@@ -858,10 +874,8 @@ describe('layerOneValidator', function () {
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
         const expected = {
-            success: false,
-            message: failMessages.base.type,
-            fail: 'username',
-            source
+            success: false, message: failMessages.base.type,
+            fail: 'username', layer: 'body', source
         };
 
         assert.deepStrictEqual(actual.value, expected);
@@ -884,10 +898,8 @@ describe('layerOneValidator', function () {
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
         const expected = {
-            success: false,
-            message: `${failMessages.base.type}`,
-            fail: 'coords',
-            source
+            success: false, message: `${failMessages.base.type}`,
+            fail: 'coords', layer: 'body', source
         };
 
         assert.deepStrictEqual(actual.value, expected);
@@ -906,7 +918,7 @@ describe('layerOneValidator', function () {
 
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
-        const expected = { success: false, message, source };
+        const expected = { success: false, message, layer: 'body', source };
 
         assert.deepStrictEqual(actual.value, expected);
         assert.deepStrictEqual(actual.status, 500);
@@ -930,10 +942,8 @@ describe('layerOneValidator', function () {
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
         const expected = {
-            success: false,
-            message: `${failMessages.base.type}`,
-            fail: 'values',
-            source
+            success: false, message: `${failMessages.base.type}`,
+            fail: 'values', layer: 'body', source
         };
 
         assert.deepStrictEqual(actual.value, expected);
@@ -956,11 +966,113 @@ describe('layerOneValidator', function () {
         layerOneValidator.body.call(values, req, res(actual), next(actual));
 
         const expected = {
-            success: false,
-            message: `${failMessages.base.biz}`,
-            fail: 'values',
-            source
+            success: false, message: `${failMessages.base.type}`,
+            fail: 'values', layer: 'body', source
         };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('49. empty array', function () {
+
+        const values = [
+            { prop: 'values', type: fns.isObjectArray }
+        ];
+
+        const actual = {};
+
+        const req = {
+            body: {
+                values: []
+            }
+        };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const expected = { success: false, message, layer: 'body', source };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('50. empty object', function () {
+
+        const values = [
+            { prop: 'values', type: fns.isObject }
+        ];
+
+        const actual = {};
+
+        const req = {
+            body: {
+                values: [{}]
+            }
+        };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const expected = { success: true };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('51. no type verification - empty object', function () {
+
+        const values = [
+            { prop: 'values', biz: biz.isCoordsArray }
+        ];
+
+        const actual = {};
+
+        const req = {
+            body: {
+                values: [{}]
+            }
+        };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const expected = {
+            success: false, message: `${failMessages.base.biz}`,
+            fail: 'values', layer: 'body', source
+        };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('52. no type verification ', function () {
+
+        const values = [
+            { prop: 'values', biz: biz.isCoordsArray }
+        ];
+
+        const actual = {};
+
+        const req = {
+            body: {
+                values: [{ x: 23, y: 2 }]
+            }
+        };
+
+        layerOneValidator.body.call(values, req, res(actual), next(actual));
+
+        const expected = { success: true };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+    it('53. params ', function () {
+
+        const values = [
+            { prop: 'id', biz: biz.isId }
+        ];
+
+        const actual = {};
+
+        const req = { params: { id: '1' } };
+
+        layerOneValidator.params.call(values, req, res(actual), next(actual));
+
+        const expected = { success: true };
 
         assert.deepStrictEqual(actual.value, expected);
     });

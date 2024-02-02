@@ -47,6 +47,8 @@ When fails, the response will be an _json_ object, with some properties:
 
 * `{ /* ... */, fail }` - Displays the name of the failing property.
 
+* `{ /* ... */, layer }` - Displays `'body'`,`'params'` or `'query'`.
+
 * `{ /* ... */, source }` - Displays the source as `layer-one-validator`.
 
 If successful, will go to the next _middleware_.

@@ -66,7 +66,9 @@ const fields = function () {
 
         const fail = { missing, extra };
 
-        res.status(400).json({ success: false, message: failMessages.base.fields, fail, source });
+        const layer = this.requestProp;
+
+        res.status(400).json({ success: false, message: failMessages.base.fields, fail, layer, source });
     }
 };
 
@@ -84,7 +86,8 @@ const type = function () {
             // Em v0.3.0+ retorna 500, validado em `checkTypeAgainstItemValidator()`
             // file:///C:\Users\vik\Dropbox\dev\minor\layer-one-validator\_sketch\_old-type.js
 
-            return { prop, test: [...arr].every(fn) };
+            // NOTE:: "[].every()" retorna `true` em empty array
+            return { prop, test: [...arr].every(fn) && !!arr.length };
         });
 
         if (tests.every(v => v.test)) return next();
@@ -93,7 +96,9 @@ const type = function () {
 
         const message = failMessages.base.type;
 
-        res.status(400).json({ success: false, message, fail, source });
+        const layer = this.requestProp;
+
+        res.status(400).json({ success: false, message, fail, layer, source });
     }
 };
 
@@ -115,14 +120,16 @@ const biz = function () {
             }
 
             // NOTE:: "[].every()" retorna `true` em empty array
-            return { prop, test: [...arr].every(fn) && arr.length };
+            return { prop, test: [...arr].every(fn) && !!arr.length };
         });
 
         if (tests.every(v => v.test)) return next();
 
         const fail = tests.find(v => !v.test).prop;
 
-        res.status(422).json({ success: false, message, fail, source });
+        const layer = this.requestProp;
+
+        res.status(422).json({ success: false, message, fail, layer, source });
     }
 };
 
@@ -316,7 +323,8 @@ const start = function (req, res, next) {
 
         const that = {
             reqProp: makeRequestProp.call(this, req),
-            data: Array.isArray(this) ? this.slice() : [this]
+            data: Array.isArray(this) ? this.slice() : [this],
+            requestProp: this.requestProp  // layer
         };
 
         dataValidator(that.data);
@@ -335,7 +343,9 @@ const start = function (req, res, next) {
 
         tryPrintError(err);
 
-        res.status(500).json({ success: false, message: message_500, source });
+        const layer = this.requestProp;
+
+        res.status(500).json({ success: false, message: message_500, layer, source });
     }
 };
 
