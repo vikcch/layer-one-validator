@@ -1077,4 +1077,218 @@ describe('layerOneValidator', function () {
         assert.deepStrictEqual(actual.value, expected);
     });
 
+    it('54. query - types: ["", 0, false, {}]', function () {
+
+        // NOTE:: Faz replace do valor da prop por: "", 0, false, {}
+        // '' -> can *not* Be Positive Integer
+        const values = [
+            { prop: 'id', type: fns.canBePositiveInteger },
+            { prop: 'name', type: fns.isString },
+        ];
+
+        const actual = {};
+
+        const req = { query: { id: '1', name: 'maria' } };
+
+        layerOneValidator.query.call(values, req, res(actual), next(actual));
+
+        const expected = {
+            success: false, layer: 'query', source: 'layer-one-validator',
+            message: 'If you own the server, check the logs'
+        };
+
+        assert.deepStrictEqual(actual.value, expected);
+    });
+
+
+    describe('with optional props', () => {
+
+        it('1. query optional biz', () => {
+
+            const values = [
+                { prop: 'id', biz: biz.isId, optional: true },
+                { prop: 'name', biz: biz.isUsername, },
+                { prop: 'age', biz: fns.canBePositiveInteger, },
+            ];
+
+            const actual = {};
+
+            const req = { query: { name: 'vikcch', age: '43' } };
+
+            layerOneValidator.query.call(values, req, res(actual), next(actual));
+
+            const expected = { success: true };
+
+            assert.deepStrictEqual(actual.value, expected);
+        });
+
+        it('2. query optional type', () => {
+
+            const values = [
+                { prop: 'name', biz: biz.isUsername, },
+                { prop: 'age', type: fns.isString, optional: true },
+            ];
+
+            const actual = {};
+
+            const req = { query: { name: 'vikcch', age: '43' } };
+
+            layerOneValidator.query.call(values, req, res(actual), next(actual));
+
+            const expected = { success: true };
+
+            assert.deepStrictEqual(actual.value, expected);
+        });
+
+        it('3. query optional type - wrong type', () => {
+
+            const values = [
+                { prop: 'name', biz: biz.isUsername, },
+                { prop: 'age', type: fns.isBoolean, optional: true },
+            ];
+
+            const actual = {};
+
+            const req = { query: { name: 'rita', age: '45' } };
+
+            layerOneValidator.query.call(values, req, res(actual), next(actual));
+
+            const expected = {
+                success: false, layer: 'query', source: 'layer-one-validator',
+                message: 'input-types', fail: 'age'
+            };
+
+            assert.deepStrictEqual(actual.value, expected);
+        });
+
+        it('4. query optional without type or biz', () => {
+
+            const values = [
+                { prop: 'name', biz: biz.isUsername, },
+                { prop: 'other', optional: true },
+            ];
+
+            const actual = {};
+
+            const req = { query: { name: 'vikcch', other: 'abc' } };
+
+            layerOneValidator.query.call(values, req, res(actual), next(actual));
+
+            const expected = { success: true };
+
+            assert.deepStrictEqual(actual.value, expected);
+        });
+
+        it('5. query optional with type - no opional entrie', () => {
+
+            const values = [
+                { prop: 'name', biz: biz.isUsername, },
+                { prop: 'other', type: fns.isString, optional: true },
+            ];
+
+            const actual = {};
+
+            const req = { query: { name: 'vikcch' } };
+
+            layerOneValidator.query.call(values, req, res(actual), next(actual));
+
+            const expected = { success: true };
+
+            assert.deepStrictEqual(actual.value, expected);
+        });
+
+        it('6. query optional with biz - no opional entrie', () => {
+
+            const values = [
+                { prop: 'name', biz: biz.isUsername, },
+                { prop: 'other', biz: fns.canBePositiveInteger, optional: true },
+            ];
+
+            const actual = {};
+
+            const req = { query: { name: 'vikcch' } };
+
+            layerOneValidator.query.call(values, req, res(actual), next(actual));
+
+            const expected = { success: true };
+
+            assert.deepStrictEqual(actual.value, expected);
+        });
+
+        it('7. query optional property with wrong type', () => {
+
+            const values = [
+                { prop: 'name', biz: biz.isUsername },
+                { prop: 'age', type: fns.isBoolean, optional: true }
+            ];
+
+            const actual = {};
+
+            const req = { query: { name: 'vikcch', age: '45' } };
+
+            layerOneValidator.query.call(values, req, res(actual), next(actual));
+
+            const expected = {
+                success: false, fail: 'age', layer: 'query',
+                source: 'layer-one-validator', message: 'input-types',
+            };
+
+            assert.deepStrictEqual(actual.value, expected);
+        });
+
+        it('8. body optional array', () => {
+
+            const values = [
+                { prop: 'ids', type: fns.isNumber, biz: fns.isPositiveInteger, optional: true },
+            ];
+
+            const actual = {};
+
+            const req = { body: { ids: [12, 56] } };
+
+            layerOneValidator.query.call(values, req, res(actual), next(actual));
+
+            const expected = { success: true };
+
+            assert.deepStrictEqual(actual.value, expected);
+        });
+
+        it('9. body optional array', () => {
+
+            const values = [
+                { prop: 'other', biz: fns.canBePositiveInteger, optional: true },
+                { prop: 'ids', type: fns.isNumber, biz: fns.isPositiveInteger, optional: true },
+            ];
+
+            const actual = {};
+
+            const req = { body: { ids: [12, 56] } };
+
+            layerOneValidator.query.call(values, req, res(actual), next(actual));
+
+            const expected = { success: true };
+
+            assert.deepStrictEqual(actual.value, expected);
+        });
+
+        it('10. body optional array without incomming data', () => {
+
+            const values = [
+                { prop: 'other', biz: fns.canBePositiveInteger, optional: true },
+                { prop: 'ids', type: fns.isNumber, biz: fns.isPositiveInteger, optional: true },
+            ];
+
+            const actual = {};
+
+            const req = { body: {} };
+
+            layerOneValidator.query.call(values, req, res(actual), next(actual));
+
+            const expected = { success: true };
+
+            assert.deepStrictEqual(actual.value, expected);
+        });
+
+    });
+
 });

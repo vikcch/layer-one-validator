@@ -10,9 +10,9 @@ Install the library with:
 
 `npm install layer-one-validator`
 
-The _validator_ should be called using the `bind()` method. The first and only _argument_ could be an `object` or an `array`.
+The _validator_ should be invoked using the `bind()` method. The first and only _argument_ can be either an `object` or an `array`.
 
-> NOTE:: If the value being tested is an _array_, the `type:function` must be examined for each element within that array. In the case of the `biz:function`, testing can be performed on the entire array or on each individual element.
+> NOTE:: If the value being tested is an _array_, the `type:function` must be evaluated for each element within that array. In the case of the `biz:function`, testing can be performed on the entire array or on each individual element.
 
 ### Syntax
 
@@ -22,9 +22,9 @@ The _validator_ should be called using the `bind()` method. The first and only _
 
 ### Object
 
-`{ prop:string [, type:function][, biz:function] }`
+`{ prop:string [, type:function][, biz:function][, optional:boolean] }`
 
-`{ prop:string [, type:function][, biz:function] }[]`
+`{ prop:string [, type:function][, biz:function][, optional:boolean] }[]`
 
 * prop <_string_> - The name of the property named on the request.
 
@@ -33,13 +33,17 @@ The _validator_ should be called using the `bind()` method. The first and only _
 * biz <_function_> - Optional, a function to test the business part of the property.
 Should return a `boolean`.
 
+* optional <_boolean_> - Optional, default: `false`. When `optional` is set to `true` and the property exists on the incoming request, it must pass validation if a `type` or `biz` rule is defined.
+
 ### Body, Query or Params
 
 The _layer-one-validator_ is an object with 3 properties, `'body'`,`'params'` and `'query'`, representing each _express request_.
 
+> NOTE:: The `Content-Type` must be set to `application/json` when the data is sent in the body of the request.
+
 ### Responses
 
-When fails, the response will be an _json_ object, with some properties:
+If validation fails, the response will be a JSON object containing:
 
 * `{ success: false }` - Will throw an error on the server with additional information.
 
@@ -59,7 +63,7 @@ If the bound _object_ or _objectsArray_ is incorrect, or if the `type` property 
 
 * `500 Internal Server Error` 
 
-When there are issues with _prop_, _type_ or inconsistencies in property quantities:
+When issues are found with prop, type, or there are discrepancies in the number of properties:
 
 * `400 Bad Request`
 

@@ -20,18 +20,21 @@ const failMessages = {
 };
 
 /**
- * Aceita props como `...array` ou uma/varias strings
- * @param {object} object 
- * @param  {...string} props ...Array ou `stringA`, `stringB`
+ * @param {object} requestProps incoming request properties (from client, ex: `id`, `name`) 
+ * @param  { {prop:string, optional:boolean|undefined}[] } expectedProps ...Array ou `stringA`, `stringB`
  * @returns 
  */
-const hasAllProperties = function (object, ...props) {
+const hasAllRequiredProps = function (incomingProps, expectedProps) {
 
-    if (Object.keys(object).length !== props.length) return false;
+    const required = expectedProps
+        .filter(v => !v.optional || (v.optional && incomingProps[v.prop]))
+        .map(v => v.prop);
 
-    const hopObject = Object.prototype.hasOwnProperty.bind(object);
+    if (Object.keys(incomingProps).length !== required.length) return false;
 
-    return props.every(prop => hopObject(prop));
+    const hopObject = prop => Object.prototype.hasOwnProperty.call(incomingProps, prop);
+
+    return required.every(prop => hopObject(prop));
 };
 
 const makeRequestProp = function (req) {
@@ -52,9 +55,8 @@ const fields = function () {
 
     return (req, res, next) => () => {
 
-        const props = this.data.map(v => v.prop);
-
-        const hasAllProps = hasAllProperties(this.reqProp, ...props);
+        const expectedProps = this.data.map(({ prop, optional }) => ({ prop, optional }));
+        const hasAllProps = hasAllRequiredProps(this.reqProp, expectedProps);
 
         if (hasAllProps) return next();
 
@@ -76,10 +78,13 @@ const type = function () {
 
     return (req, res, next) => () => {
 
-        const tests = this.data.map(({ prop, type: fn }) => {
+        const tests = this.data.map(({ prop, type: fn, optional }) => {
 
             if (!fn) return { test: true };
+
             const value = this.reqProp[prop];
+            if (value === undefined && optional) return { test: true };
+
             const arr = Array.isArray(value) ? value : [value];
 
             // NOTE:: Até à v0.2.0 verificava se testava contra o item do array...
@@ -108,10 +113,13 @@ const biz = function () {
 
     return (req, res, next) => () => {
 
-        const tests = this.data.map(({ prop, biz: fn }) => {
+        const tests = this.data.map(({ prop, biz: fn, optional }) => {
 
             if (!fn) return { test: true };
+
             const value = this.reqProp[prop];
+            if (value === undefined && optional) return { test: true };
+
             const arr = Array.isArray(value) ? value : [value];
 
             if (Array.isArray(value)) {
@@ -213,7 +221,7 @@ const arrayValidator = mixArray => {
 
     // NOTE:: Não copia properties de "mix array/object" (.requestProp)
     const array = mixArray.slice();
-    const alloweds = ['prop', 'type', 'biz'];
+    const alloweds = ['prop', 'type', 'biz', 'optional'];
     const keys = Object.keys(mixArray);
 
     if (keys.length !== array.length + extraPropsCount) {
@@ -273,7 +281,7 @@ const thisValidator = (value) => {
         throw new Error('An `object` must be provided to the bind function');
     }
 
-    const alloweds = ['prop', 'type', 'biz'];
+    const alloweds = ['prop', 'type', 'biz', 'optional'];
     const keys = Object.keys(target);
 
     if (!Array.isArray(target) && keys.some(v => !alloweds.includes(v))) {
@@ -430,3 +438,11 @@ module.exports = {
         start.call(binding, req, res, next);
     }
 };
+
+
+// module.exports = {
+//     ...module.exports,
+//     testables: {
+//         hasAllRequiredProps
+//     }
+// };
